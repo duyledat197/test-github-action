@@ -42,7 +42,8 @@ jobs:
           last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
           echo $last_release
           echo ${TARGET_BRANCH}
-          if [[ check_format_release_branch ${TARGET_BRANCH} && ${TARGET_BRANCH} != $last_release ]];
+          is_valid=$(check_format_release_branch ${TARGET_BRANCH})
+          if [[ is_valid == 0 && ${TARGET_BRANCH} != $last_release ]];
           then
             echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; 
             return 1
