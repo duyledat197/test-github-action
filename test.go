@@ -5,4 +5,5 @@ const (
 	Ca   = "ca"
 	TE   = "teet"
 	AS   = "as"
+	B    = "asd"
 )
