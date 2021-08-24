@@ -5,5 +5,4 @@ const (
 	Ca   = "ca"
 	Baz  = "asd"
 	AC   = "ac"
-	AD   = "Asd"
 )
