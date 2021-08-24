@@ -43,4 +43,4 @@ jobs:
             fi
             return 0
           }
-          $(check_old_release_branch)
+          echo $(check_old_release_branch)
