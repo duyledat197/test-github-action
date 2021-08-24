@@ -30,14 +30,17 @@ jobs:
         env:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
         run: |
-          regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[01]|[0-2][1-9]|[12]0)$"
+          check_old_release_branch() {
+            regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[01]|[0-2][1-9]|[12]0)$"
 
-          branch=${TARGET_BRANCH}
-          last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
-          echo ${branch}
+            branch=${TARGET_BRANCH}
+            last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
+            echo ${branch}
 
-          match_count=$(echo ${branch} | grep -o -P "${regexp_release_branch}" | wc -l)
-          if [[ ${match_count} != 1  && ${TARGET_BRANCH} != $last_release ]]; then
-            echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; return 1
-          fi
-          return 0
+            match_count=$(echo ${branch} | grep -o -P "${regexp_release_branch}" | wc -l)
+            if [[ ${match_count} != 1  && ${TARGET_BRANCH} != $last_release ]]; then
+              echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; return 1
+            fi
+            return 0
+          }
+          $(check_old_release_branch)
