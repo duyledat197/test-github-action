@@ -35,8 +35,10 @@ jobs:
           branch=${TARGET_BRANCH}
           last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
           echo ${branch}
+          echo ${last_release}
 
           match_count=$(echo ${branch} | grep -o -P "${regexp_release_branch}" | wc -l)
+          echo $match_count
           if [[ ${match_count} == 1  && ${TARGET_BRANCH} != $last_release ]]; then
             echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; return 1
           fi
