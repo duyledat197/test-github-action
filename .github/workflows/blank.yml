@@ -38,5 +38,5 @@ jobs:
 
           match_count=$(echo ${branch} | grep -o -P "${regexp_release_branch}" | wc -l)
           if [[ ${match_count} == 1  && ${TARGET_BRANCH} != $last_release ]]; then
-            echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; return 1
+            echo "ERROR: target branch is obsolete (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; exit 1
           fi
