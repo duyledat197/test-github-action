@@ -38,4 +38,3 @@ jobs:
           then
               echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; return 1
           fi
-          return 0
