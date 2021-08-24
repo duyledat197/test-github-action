@@ -30,13 +30,13 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Run a multi-line script
         env:
-          TARGET_BRANCH: ${{ github.base_ref }}
+          TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
         run: |
           set -e
           last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
           echo $last_release
-          echo $TARGET_BRANCH
-          if [[ $TARGET_BRANCH != $last_release ]];
+          echo ${TARGET_BRANCH}
+          if [[ ${TARGET_BRANCH} != $last_release ]];
           then
             echo "ERROR: target branch is old (got \"${GITHUB_BASE_REF}\", expected \"${last_release}\")"; 
             return 1
