@@ -35,9 +35,8 @@ jobs:
 
           branch="$1"
           last_release="$2"
-          echo $(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
+          last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
           echo ${branch}
-          echo ${last_release}
 
           match_count=$(echo ${branch} | grep -o -P "${regexp_release_branch}" | wc -l)
           if [[ ${match_count} != 1  && ${TARGET_BRANCH} != $last_release ]]; then
@@ -45,5 +44,4 @@ jobs:
           fi
           return 0
           }
-          last_release=$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
-          $(check_old_release_branch ${TARGET_BRANCH} ${last_release})
+          $(check_old_release_branch ${TARGET_BRANCH})
