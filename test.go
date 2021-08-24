@@ -6,4 +6,5 @@ const (
 	Baz  = "asd"
 	AC   = "ac"
 	B    = "asd"
+	C    = d
 )
