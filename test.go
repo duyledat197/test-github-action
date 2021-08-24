@@ -4,4 +4,5 @@ const (
 	Test = "teset"
 	Ca   = "ca"
 	Baz  = "asd"
+	AC   = "ac"
 )
