@@ -40,9 +40,9 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const {getTicketIDs, getPRCommits} = require(`${{github.workspace}}/test.js`);
+            const {getTicketIDs, getPRCommits} = require(`//test.js`);
             console.log(getPRCommits)
-            const commits = await getPRCommits({github, context });
+            const commits = await getPRCommits({ github, context });
             console.log("commits", commits)
             getTicketIDs();
 
