@@ -53,7 +53,7 @@ jobs:
         env:
           TEST: ${{ steps.get_release_pull_request.env.TEST }}
         run: |
-          echo "${{TEST}}"
+          echo "${{env.TEST}}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
