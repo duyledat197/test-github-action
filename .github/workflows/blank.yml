@@ -33,9 +33,9 @@ jobs:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
         with:
           script: |
-            console.log("github",github.pulls.listCommits())
+            const list = await github.pulls.listCommits()
+            console.log("list",list)
             console.log("context",context)
-            console.log("steps",steps)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
