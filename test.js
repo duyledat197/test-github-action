@@ -32,6 +32,6 @@ const getTicketIDs = async (releaseDate, jiraUser, jiraToken) => {
 };
 
 module.export = {
-  getCommitsPR,
+  getPRCommits,
   getTicketIDs,
 };
