@@ -34,7 +34,11 @@ jobs:
         with:
           script: |
 
-            const list = await github.pulls.listCommits()
+            const list = await github.pulls.listCommits({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`,
+            });
             console.log("list",list)
             console.log("github.pulls.listCommits",github.pulls.listCommits)
             console.log("context",context)
