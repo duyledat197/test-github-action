@@ -33,7 +33,7 @@ jobs:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
         with:
           script: |
-            console.log("github",github)
+            console.log("github",github.pulls.listCommits())
             console.log("context",context)
             console.log("steps",steps)
 
