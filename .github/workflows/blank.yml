@@ -52,7 +52,7 @@ jobs:
       - name: Get current release branch
         id: test
         env:
-          TEST: ${{ steps.get_release_pull_request.env.TEST }}
+          TEST: ${{ steps.get_release_pull_request.core.TEST }}
         run: |
           echo "${{env.TEST}}"
 
