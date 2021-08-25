@@ -46,9 +46,13 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.payload.number,
             });
-            const regex = new RegExp('\bLT-\d{1,6}\b');
+            const regex = '\bLT-\d{1,6}\b';
             console.log("data",result.data)
-            const cms = result.data.map(el => regex.match(el.commit.message))
+            const cms = result.data.map(el => el 
+              && el.commit 
+              && el.commit.message
+              && el.commit.message.match(regex)
+            )
             console.log("commits", cms)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
