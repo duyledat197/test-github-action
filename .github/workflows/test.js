@@ -31,7 +31,7 @@ async function getTicketIDs(releaseDate, jiraUser, jiraToken) {
   console.log(result);
 }
 
-module.export = {
+module.exports = {
   getPRCommits,
   getTicketIDs,
 };
