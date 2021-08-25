@@ -41,8 +41,9 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const {getTicketIDs, getPRCommits} = require(`${{github.workspace}}/test.js`);
-            console.log(getPRCommits());
-            getTicketIDs()
+            const commits = await getPRCommits();
+            console.log("commits", commits)
+            getTicketIDs();
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
