@@ -8,9 +8,9 @@ const (
 	Baz  = "asd"
 	AC   = "ac"
 	B    = "asd"
-	C    = "d"
 )
 
 func main() {
 	log.Printf("WTF MAN")
+
 }
