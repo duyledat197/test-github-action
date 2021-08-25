@@ -46,7 +46,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.payload.number,
             });
-            const regex = '\bLT-\d{1,6}\b';
+            const regex = /\bLT-\d{1,6}\b/;
             console.log("data",result.data)
             const cms = result.data.map(el => el 
               && el.commit 
