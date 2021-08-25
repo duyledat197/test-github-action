@@ -40,15 +40,13 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-
+            const { BRANCH_NAME } = process.env
             const list = await github.pulls.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
-              pull_number: `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`,
+              pull_number: context.payload.number,
             });
             console.log("list",list)
-            console.log("github.pulls.listCommits",github.pulls.listCommits)
-            console.log("context",context)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
