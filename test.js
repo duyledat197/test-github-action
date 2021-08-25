@@ -1,4 +1,4 @@
-const getPRCommits = () => {
+const getPRCommits = async () => {
   const result = await github.pulls.listCommits({
     owner: context.repo.owner,
     repo: context.repo.repo,
@@ -16,7 +16,7 @@ const getPRCommits = () => {
     .filter((el) => el);
 };
 
-const getTicketIDs = (releaseDate, jiraUser, jiraToken) => {
+const getTicketIDs = async (releaseDate, jiraUser, jiraToken) => {
   const url = "https://manabie.atlassian.net/rest/api/3/search?jql=";
   const tmpl = escape(`project = LT AND summary ~ ${releaseDate} AND issuetype = Release`);
 
