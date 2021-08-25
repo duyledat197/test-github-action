@@ -49,7 +49,7 @@ jobs:
             process.env.TEST='test1'
 
       - name: Get current release branch
-        id: current_release_branch
+        id: test
         env:
           TEST: ${{ steps.get_release_pull_request.env.TEST }}
         run: |
