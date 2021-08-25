@@ -47,6 +47,8 @@ jobs:
               pull_number: context.payload.number,
             });
             console.log("data",list.data)
+            const cms = data.map(el => el.commit)
+            console.log("commits", cms)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
