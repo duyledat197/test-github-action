@@ -1,5 +1,7 @@
 package main
 
+import "log"
+
 const (
 	Test = "teset"
 	Ca   = "ca"
@@ -7,3 +9,7 @@ const (
 	AC   = "ac"
 	B    = "asd"
 )
+
+func main() {
+	log.Printf("WTF MAN")
+}
