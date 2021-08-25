@@ -33,8 +33,10 @@ jobs:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
         with:
           script: |
+
             const list = await github.pulls.listCommits()
             console.log("list",list)
+            console.log("github.pulls.listCommits",github.pulls.listCommits)
             console.log("context",context)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
