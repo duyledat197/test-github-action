@@ -1,4 +1,4 @@
-async function getPRCommits() {
+async function getPRCommits({ github, context }) {
   const result = await github.pulls.listCommits({
     owner: context.repo.owner,
     repo: context.repo.repo,
