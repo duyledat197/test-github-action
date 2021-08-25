@@ -41,12 +41,19 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(`${{env.GITHUB_WORKSPACE}}`)
-            const {getTicketIDs, getPRCommits} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
+
+            const { getPRCommits} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
             console.log(getPRCommits)
             const commits = await getPRCommits({ github, context });
             console.log("commits", commits)
-            getTicketIDs();
+            process.env.TEST='test1'
+
+      - name: Get current release branch
+        id: current_release_branch
+        env:
+          TEST: ${{ steps.get_release_pull_request.env.TEST }}
+        run: |
+          echo "${{TEST}}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
