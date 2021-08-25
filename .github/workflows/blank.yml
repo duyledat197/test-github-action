@@ -46,7 +46,7 @@ jobs:
               repo: context.repo.repo,
               pull_number: context.payload.number,
             });
-            console.log("list",list)
+            console.log("data",list.data)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
