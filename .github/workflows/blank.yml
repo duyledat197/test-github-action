@@ -51,7 +51,7 @@ jobs:
             const cms = result.data.map(el => {
               if (el && el.commit && el.commit.message) {
                 const val = el.commit.message.match(regex)
-                if (val && val.length > 0 ) return val
+                if (val && val.length > 0 ) return val[0]
               }
               return null
             }).filter(el => el)
