@@ -47,6 +47,7 @@ jobs:
             const commits = await getPRCommits({ github, context });
             console.log("commits", commits)
             process.env.TEST='test1'
+            core.exportVariable('TEST', "test1")
 
       - name: Get current release branch
         id: test
