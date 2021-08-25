@@ -41,13 +41,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
             const { BRANCH_NAME } = process.env
-            const list = await github.pulls.listCommits({
+            const result = await github.pulls.listCommits({
               owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.number,
             });
-            console.log("data",list.data)
-            const cms = list.data.map(el => el.commit.message)
+            const regex = new RegExp('^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[0-1]|[0-2][1-9]|[12]0)$');
+            console.log("data",result.data)
+            const cms = result.data.map(el => regex.match(el.commit.message))
             console.log("commits", cms)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
