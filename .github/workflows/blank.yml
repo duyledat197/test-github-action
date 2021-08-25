@@ -48,11 +48,13 @@ jobs:
             });
             const regex = /\bLT-\d{1,6}\b/;
             console.log("data",result.data)
-            const cms = result.data.map(el => el 
-              && el.commit 
-              && el.commit.message
-              && el.commit.message.match(regex)
-            )
+            const cms = result.data.map(el => {
+              if (el && el.commit && el.commit.message) {
+                const val = el.commit.message.match(regex)
+                if (val && val.length > 0 ) return val
+              }
+              return null
+            }).filter(el => el)
             console.log("commits", cms)
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
