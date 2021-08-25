@@ -45,14 +45,13 @@ jobs:
             const { getPRCommits} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
             console.log(getPRCommits)
             const commits = await getPRCommits({ github, context });
-            console.log("commits", commits)
-            process.env.TEST='test1'
-            core.exportVariable('TEST', "test1")
+
+            core.exportVariable('TICKETIDS', JSON.stringify(commits))
 
       - name: Get current release branch
         id: test
         run: |
-          echo "${{env.TEST}}"
+          echo "${{env.TICKETIDS}}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
