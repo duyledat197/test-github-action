@@ -1,38 +1,37 @@
-async function getCommitOnPR({ github, context }, prNumber) {
-  let listCommitInfo = [];
-  const limit = 100;
-  let page = 1;
-  let dataSize = 0;
-
-  console.log(prNumber);
-  let url = `/repos/{owner}/{repo}/pulls/{pull_number}/commits?per_page=${limit}&page=${page}`;
-  let result = await github.request(url, {
+const getPRCommits = () => {
+  const result = await github.pulls.listCommits({
     owner: context.repo.owner,
     repo: context.repo.repo,
-    pull_number: prNumber,
+    pull_number: context.payload.number,
   });
+  const regex = /\bLT-\d{1,6}\b/;
+  return result.data
+    .map((el) => {
+      if (el && el.commit && el.commit.message) {
+        const val = el.commit.message.match(regex);
+        if (val && val.length > 0) return val[0];
+      }
+      return null;
+    })
+    .filter((el) => el);
+};
 
-  while (result.data.length !== 0) {
-    dataSize = result.data.length;
-    for (let i = 0; i < dataSize; i++) {
-      listCommitInfo.push({
-        sha: result.data[i].sha,
-        message: result.data[i].commit.message,
-      });
-    }
+const getTicketIDs = (releaseDate, jiraUser, jiraToken) => {
+  const url = "https://manabie.atlassian.net/rest/api/3/search?jql=";
+  const tmpl = escape(`project = LT AND summary ~ ${releaseDate} AND issuetype = Release`);
 
-    if (dataSize < limit) {
-      break;
-    }
+  const result = await fetch(`${url}${tmpl}`, {
+    headers: {
+      method: "GET",
+      Authorization: `Basic ${base64.encode(jiraUser + ":" + jiraToken)}`,
+      "Content-Type": "application/json",
+      // 'Content-Type': 'application/x-www-form-urlencoded',
+    },
+  });
+  console.log(result);
+};
 
-    page++;
-
-    url = `/repos/{owner}/{repo}/pulls/{pull_number}/commits?per_page=${limit}&page=${page}`;
-    result = await github.request(url, {
-      owner: context.repo.owner,
-      repo: context.repo.repo,
-      pull_number: prNumber,
-    });
-  }
-  return listCommitInfo;
-}
+module.export = {
+  getCommitsPR,
+  getTicketIDs,
+};
