@@ -30,6 +30,5 @@ jobs:
         env:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
         run: |
-          go run ./test.go
           const {getReleasePR} = require(`${{github.workspace}}/test.js`)
           return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
