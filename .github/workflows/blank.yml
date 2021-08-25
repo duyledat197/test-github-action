@@ -40,12 +40,12 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            console.log(github.action_path)
-            const {getTicketIDs, getPRCommits} = require(`${github.action_path}/.github/workflows/test.js`);
-            console.log(getPRCommits)
-            const commits = await getPRCommits({ github, context });
-            console.log("commits", commits)
-            getTicketIDs();
+            console.log(github)
+            # const {getTicketIDs, getPRCommits} = require(`${github.action_path}/.github/workflows/test.js`);
+            # console.log(getPRCommits)
+            # const commits = await getPRCommits({ github, context });
+            # console.log("commits", commits)
+            # getTicketIDs();
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
