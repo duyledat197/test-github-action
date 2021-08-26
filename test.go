@@ -1,6 +1,7 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
@@ -26,6 +27,17 @@ type ReleaseAssistant struct {
 	ConcurentLimit int
 }
 
+type Data struct {
+	IssueLinks []struct {
+		OutwardIssue struct {
+			Key    string `json:"key,omitempty"`
+			Status struct {
+				Name string `json:"name,omitempty"`
+			} `json:"status,omitempty"`
+		} `json:"outwardIssue,omitempty"`
+	} `json:"issuelinks,omitempty"`
+}
+
 func (a *ReleaseAssistant) get(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -42,14 +54,12 @@ func (a *ReleaseAssistant) call(url string, req *http.Request) ([]byte, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
-		log.Println(err)
 		return nil, err
 
 	}
@@ -66,7 +76,14 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 		log.Println(err)
 		return "", "", fmt.Errorf("error when fetching issues from search endpoint: %w", err)
 	}
-	log.Println(string(resp))
+
+	var result []Data
+
+	if err := json.Unmarshal(resp, result); err != nil {
+		log.Println(err)
+		return "", "", err
+	}
+	log.Println(result)
 	return "", "", nil
 }
 
