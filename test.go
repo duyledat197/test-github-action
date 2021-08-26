@@ -14,6 +14,7 @@ import (
 
 const (
 	DATE_FMT = "20060102"
+	A        = "a"
 )
 
 type ReleaseAssistant struct {
