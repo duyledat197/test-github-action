@@ -60,7 +60,7 @@ jobs:
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
       - name: Step 1.5
-        id: get_release_pull_request
+        id: get_release_pull_request_2
         run: |
           echo "${{env.TICKET_IDS}}"
 
