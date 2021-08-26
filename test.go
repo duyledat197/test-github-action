@@ -42,6 +42,11 @@ type Data struct {
 	} `json:"issues,omitempty"`
 }
 
+type Ticket struct {
+	ID     string
+	Status string
+}
+
 func (a *ReleaseAssistant) get(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -87,7 +92,21 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 		log.Println(err)
 		return "", "", err
 	}
-	log.Println(result)
+
+	if len(result.Issues) == 0 {
+		return "", "", fmt.Errorf("issue list is empty")
+	}
+
+	var tickets []*Ticket
+
+	for _, v := range result.Issues[0].Fields.IssueLinks {
+		tickets = append(tickets, &Ticket{
+			ID:     v.OutwardIssue.Key,
+			Status: v.OutwardIssue.Status.Name,
+		})
+	}
+
+	log.Println(tickets)
 	return "", "", nil
 }
 
