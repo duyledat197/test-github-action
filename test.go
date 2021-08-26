@@ -37,6 +37,7 @@ type JiraClient struct {
 
 type Response struct {
 	Issues []struct {
+		Key    string `json:"key,omitempty"`
 		Fields struct {
 			IssueLinks []struct {
 				OutwardIssue struct {
@@ -85,11 +86,11 @@ func (a *JiraClient) call(url string, req *http.Request) ([]byte, error) {
 	return body, nil
 }
 
-func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, error) {
+func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, string, error) {
 	tmpl := url.QueryEscape(fmt.Sprintf("project = LT AND summary ~ %v AND issuetype = Release", releaseDate))
 	resp, err := a.get(fmt.Sprintf("https://manabie.atlassian.net/rest/api/3/search?jql=%s", tmpl))
 	if err != nil {
-		return nil, fmt.Errorf("error when fetching issues from search endpoint: %w", err)
+		return nil, "", fmt.Errorf("error when fetching issues from search endpoint: %w", err)
 	}
 
 	var result Response
@@ -98,11 +99,11 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, error) {
 
 	if err := json.Unmarshal(resp, &result); err != nil {
 		log.Println(err)
-		return nil, err
+		return nil, "", err
 	}
 
 	if len(result.Issues) == 0 {
-		return nil, fmt.Errorf("issue list is empty")
+		return nil, "", fmt.Errorf("issue list is empty")
 	}
 
 	var tickets []*Ticket
@@ -114,7 +115,7 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, error) {
 		})
 	}
 
-	return tickets, nil
+	return tickets, result.Issues[0].Key, nil
 }
 
 func main() {
@@ -135,7 +136,7 @@ func main() {
 		panic(err)
 	}
 
-	jiraTickets, err := a.getIssueTickets(*releaseDateFlag)
+	jiraTickets, mainTicketID, err := a.getIssueTickets(*releaseDateFlag)
 
 	if err != nil {
 		panic(err)
@@ -157,7 +158,7 @@ func main() {
 	}
 
 	msgs := strings.Join(messages, ", ")
-	msgs += fmt.Sprintf("isn't noted in %s")
+	msgs += fmt.Sprintf("isn't noted in %s", mainTicketID)
 
 	f, err := os.Create(".env")
 
