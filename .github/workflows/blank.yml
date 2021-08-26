@@ -59,11 +59,6 @@ jobs:
             const commits = await getPRCommits({ github, context });
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
-      - name: Step 1.5
-        id: get_release_pull_request_2
-        run: |
-          echo "${{env.TICKET_IDS}}"
-
       - name: Step 2
         id: test2
         env:
