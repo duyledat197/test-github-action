@@ -41,12 +41,14 @@ func (a *ReleaseAssistant) call(url string, req *http.Request) ([]byte, error) {
 
 	resp, err := http.DefaultClient.Do(req)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
 	defer resp.Body.Close()
 	body, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 
 	}
@@ -60,6 +62,7 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 	tmpl := url.QueryEscape(`project = LT AND summary ~ "` + releaseDate + `" AND issuetype = Release`)
 	resp, err := a.get(fmt.Sprintf("https://manabie.atlassian.net/rest/api/3/search?jql=%s", tmpl))
 	if err != nil {
+		log.Println(err)
 		return "", "", fmt.Errorf("error when fetching issues from search endpoint: %w", err)
 	}
 	log.Println(string(resp))
@@ -89,6 +92,8 @@ func main() {
 	}
 	if releaseDay, err := time.Parse(DATE_FMT, *releaseDateFlag); err == nil {
 		a.searchRelease(releaseDay)
+	} else {
+		log.Println(err)
 	}
 
 }
