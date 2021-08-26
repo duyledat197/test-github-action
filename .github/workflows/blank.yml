@@ -77,10 +77,11 @@ jobs:
         with:
           script: |
             console.log(github)
-            github.issues.createComment({
+            github.pulls.createReviewComment({
                owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.number,
+              body: '👋 Thanks for reporting!'
             })
 
 # console.log("${{ steps.test2.outputs.messages }}")
