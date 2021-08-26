@@ -76,13 +76,11 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            github.pulls.createReview({
+            github.pulls.createReviewComment({
                owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.number,
               body: '👋 Thanks for reporting!',
-              position: "last",
-              path: ""
             })
 
 # console.log("${{ steps.test2.outputs.messages }}")
