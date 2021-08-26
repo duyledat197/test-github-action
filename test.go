@@ -164,10 +164,12 @@ func main() {
 		ticket, ok := ticketMap[v]
 		if !ok {
 			messages = append(messages, v)
+		} else {
+			if !isTicketInWorkState(ticket.Status) {
+				statusMessages = append(statusMessages, v)
+			}
 		}
-		if !isTicketInWorkState(ticket.Status) {
-			statusMessages = append(statusMessages, v)
-		}
+
 	}
 
 	var msg string
