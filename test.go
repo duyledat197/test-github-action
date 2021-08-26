@@ -17,7 +17,7 @@ const (
 func main() {
 	jiraUserFlag := flag.String("user", "", "JIRA user name, eg: devops@manabie.com")
 	jiraTokenFlag := flag.String("token", "", "JIRA user token")
-	log.Println("jiraUserFlag", jiraUserFlag)
-	log.Println("jiraTokenFlag", jiraTokenFlag)
+	log.Println("jiraUserFlag", *jiraUserFlag)
+	log.Println("jiraTokenFlag", *jiraTokenFlag)
 
 }
