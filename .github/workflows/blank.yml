@@ -54,7 +54,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-
+            console.log(context)
             const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
             const commits = await getPRCommits({ github, context });
 
