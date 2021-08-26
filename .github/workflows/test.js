@@ -4,8 +4,8 @@ async function getPRCommits({ github, context }) {
     repo: context.repo.repo,
     pull_number: context.payload.number,
   });
-  console.log(JSON.stringify(github.pulls));
   const regex = /\bLT-\d{1,6}\b/;
+  console.log(result);
   return result.data
     .map((el) => {
       if (el && el.commit && el.commit.message) {
