@@ -5,12 +5,15 @@ async function getPRCommits({ github, context }) {
     pull_number: context.payload.number,
   });
   const regex = /\bLT-\d{1,6}\b/;
-  console.log(result);
   return result.data
     .map((el) => {
       if (el && el.commit && el.commit.message) {
+        console.log(el.commit);
         const val = el.commit.message.match(regex);
-        if (val && val.length > 0) return val[0];
+        if (val && val.length > 0)
+          return {
+            ticketID: val[0],
+          };
       }
       return null;
     })
