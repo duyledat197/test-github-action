@@ -29,15 +29,17 @@ type ReleaseAssistant struct {
 
 type Data struct {
 	Issues []struct {
-		IssueLinks []struct {
-			OutwardIssue struct {
-				Key    string `json:"key,omitempty"`
-				Status struct {
-					Name string `json:"name,omitempty"`
-				} `json:"status,omitempty"`
-			} `json:"outwardIssue,omitempty"`
-		} `json:"issuelinks,omitempty"`
-	} `json:"issues"`
+		Fields struct {
+			IssueLinks []struct {
+				OutwardIssue struct {
+					Key    string `json:"key,omitempty"`
+					Status struct {
+						Name string `json:"name,omitempty"`
+					} `json:"status,omitempty"`
+				} `json:"outwardIssue,omitempty"`
+			} `json:"issuelinks,omitempty"`
+		} `json:"fields,omitempty"`
+	} `json:"issues,omitempty"`
 }
 
 func (a *ReleaseAssistant) get(url string) ([]byte, error) {
