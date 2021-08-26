@@ -79,7 +79,7 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 		return "", "", fmt.Errorf("error when fetching issues from search endpoint: %w", err)
 	}
 
-	var result []Data
+	var result Data
 
 	if err := json.Unmarshal(resp, &result); err != nil {
 		log.Println(err)
