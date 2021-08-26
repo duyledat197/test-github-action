@@ -9,15 +9,16 @@ import (
 	"net/http"
 	"net/url"
 	"regexp"
+	"strings"
 	"time"
 )
 
 const (
 	DATE_FMT = "20060102"
-	A        = "a"
+	Comma    = ","
 )
 
-type ReleaseAssistant struct {
+type JiraClient struct {
 	UserName  string
 	UserToken string
 
@@ -28,7 +29,7 @@ type ReleaseAssistant struct {
 	ConcurentLimit int
 }
 
-type Data struct {
+type Response struct {
 	Issues []struct {
 		Fields struct {
 			IssueLinks []struct {
@@ -50,7 +51,7 @@ type Ticket struct {
 	Status string
 }
 
-func (a *ReleaseAssistant) get(url string) ([]byte, error) {
+func (a *JiraClient) get(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		log.Println(err)
@@ -60,7 +61,7 @@ func (a *ReleaseAssistant) get(url string) ([]byte, error) {
 	return a.call(url, req)
 }
 
-func (a *ReleaseAssistant) call(url string, req *http.Request) ([]byte, error) {
+func (a *JiraClient) call(url string, req *http.Request) ([]byte, error) {
 	req.Header.Set("Accept", "application/json")
 	req.SetBasicAuth(a.UserName, a.UserToken)
 
@@ -78,26 +79,22 @@ func (a *ReleaseAssistant) call(url string, req *http.Request) ([]byte, error) {
 	return body, nil
 }
 
-func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error) {
-	log.Println("searchRelease", when)
-
-	releaseDate := when.Format(DATE_FMT)
-	tmpl := url.QueryEscape(`project = LT AND summary ~ "` + releaseDate + `" AND issuetype = Release`)
+func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, error) {
+	tmpl := url.QueryEscape(fmt.Sprintf("project = LT AND summary ~ %v AND issuetype = Release", releaseDate))
 	resp, err := a.get(fmt.Sprintf("https://manabie.atlassian.net/rest/api/3/search?jql=%s", tmpl))
 	if err != nil {
-		log.Println(err)
-		return "", "", fmt.Errorf("error when fetching issues from search endpoint: %w", err)
+		return nil, fmt.Errorf("error when fetching issues from search endpoint: %w", err)
 	}
 
-	var result Data
+	var result Response
 
 	if err := json.Unmarshal(resp, &result); err != nil {
 		log.Println(err)
-		return "", "", err
+		return nil, err
 	}
 
 	if len(result.Issues) == 0 {
-		return "", "", fmt.Errorf("issue list is empty")
+		return nil, fmt.Errorf("issue list is empty")
 	}
 
 	var tickets []*Ticket
@@ -109,48 +106,34 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 		})
 	}
 
-	for _, v := range tickets {
-		log.Printf("%+v", v)
-	}
-	return "", "", nil
+	return tickets, nil
 }
 
 func main() {
 	jiraUserFlag := flag.String("user", "", "JIRA user name, eg: devops@manabie.com")
 	jiraTokenFlag := flag.String("token", "", "JIRA user token")
 	releaseDateFlag := flag.String("releaseDate", "", "Release date in yyyymmdd fmt, eg: 20160101")
-	tidketIDsFlag := flag.String("ticketIDs", "", "List commit tickets, eg: [\"LT-8586\",\"LT-1234\"]")
+	commitTicketIDsFlag := flag.String("commitTicketIDs", "", "List commit tickets, eg: [LT-8586,LT-1234]")
 
 	flag.Parse()
-	log.Println("jiraUserFlag", *jiraUserFlag)
-	log.Println("jiraTokenFlag", *jiraTokenFlag)
-	log.Println("tidketIDsFlag", *tidketIDsFlag)
 
-	var ticketIDs []string
-
-	if err := json.Unmarshal([]byte(*tidketIDsFlag), &ticketIDs); err != nil {
-		log.Println(err)
-	}
-	log.Println("ticketIDs", ticketIDs)
-
-	a := &ReleaseAssistant{
+	str := strings.Trim(*commitTicketIDsFlag, "[]")
+	commitTicketIDs := strings.Split(str, Comma)
+	fmt.Println(commitTicketIDs)
+	a := &JiraClient{
 		UserName:  *jiraUserFlag,
 		UserToken: *jiraTokenFlag,
-
-		RgIssueKey: regexp.MustCompile(`LT-[0-9]{1,6}`),
-		RepoBaseBranch: map[string]string{
-			"manabie-com/backend":             "develop",
-			"manabie-com/school-portal-admin": "develop",
-			"manabie-com/student-app":         "develop",
-			"manabie-com/eibanam":             "develop",
-		},
-		ReleaseDay:     time.Thursday,
-		ConcurentLimit: 5,
 	}
-	if releaseDay, err := time.Parse(DATE_FMT, *releaseDateFlag); err == nil {
-		a.searchRelease(releaseDay)
-	} else {
-		log.Println(err)
+	_, err := time.Parse(DATE_FMT, *releaseDateFlag)
+	if err != nil {
+		panic(err)
 	}
 
+	jiraTickets, err := a.getIssueTickets(*releaseDateFlag)
+
+	if err != nil {
+		panic(err)
+	}
+
+	fmt.Println(jiraTickets)
 }
