@@ -52,7 +52,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           ref: "develop"
-      - run: |
+        run: |
           echo "${{secrets.JIRA_USER}}"
           echo "${{secrets.JIRA_TOKEN}}"
 
