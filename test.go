@@ -106,7 +106,7 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 		})
 	}
 
-	log.Println(tickets)
+	log.Printf("%+v", tickets)
 	return "", "", nil
 }
 
