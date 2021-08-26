@@ -42,7 +42,7 @@ jobs:
         id: current_release_branch
         run: |
           set -e
-          echo "::set-output name=BRANCH_NAME::$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)"
+          echo "::set-output name=BRANCH_NAME::$(git branch --all --list '*origin/release/20*' | sort -r | head -n 1 | cut -c18-)"
 
       # Runs a set of commands using the runners shell
       - name: Step 1
@@ -67,7 +67,7 @@ jobs:
           TEST: "test"
         run: |
           set -e
-          eval $(go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}})
+          go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}}
           echo "::set-output name=messages::"$(cat .env)""
 
       - name: Step 3
