@@ -22,6 +22,7 @@ const (
 
 var (
 	WorkStateList = []string{"In progress", "Dev complete", "Ready for Review", "Waiting for demo"}
+	TicketRegex   = regexp.MustCompile(`LT-[0-9]{1,6}`)
 )
 
 type JiraClient struct {
@@ -107,6 +108,7 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, string, err
 	var tickets []*Ticket
 
 	for _, v := range result.Issues[0].Fields.IssueLinks {
+
 		tickets = append(tickets, &Ticket{
 			ID:     v.OutwardIssue.Key,
 			Status: v.OutwardIssue.Fields.Status.Name,
@@ -134,6 +136,8 @@ func main() {
 	flag.Parse()
 
 	commitTicketIDs := strings.Split(strings.Trim(*commitTicketIDsFlag, Bracket), Comma)
+
+	log.Println(commitTicketIDs)
 	a := &JiraClient{
 		UserName:  *jiraUserFlag,
 		UserToken: *jiraTokenFlag,
