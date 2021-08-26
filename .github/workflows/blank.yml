@@ -54,6 +54,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           ref: "develop"
         run: |
+          echo "test"
           echo "${{secrets.JIRA_USER}}"
           echo "${{secrets.JIRA_TOKEN}}"
 
