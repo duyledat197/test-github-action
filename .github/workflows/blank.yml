@@ -76,7 +76,8 @@ jobs:
         uses: actions/github-script@v4
         with:
           script: |
-            echo "${{ steps.test2.outputs.messages }}"
+            console.log(github)
+            console.log("${{ steps.test2.outputs.messages }}")
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
