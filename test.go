@@ -33,9 +33,11 @@ type Data struct {
 			IssueLinks []struct {
 				OutwardIssue struct {
 					Key    string `json:"key,omitempty"`
-					Status struct {
-						Name string `json:"name,omitempty"`
-					} `json:"status,omitempty"`
+					Fields struct {
+						Status struct {
+							Name string `json:"name,omitempty"`
+						} `json:"status,omitempty"`
+					} `json:"fields,omitempty"`
 				} `json:"outwardIssue,omitempty"`
 			} `json:"issuelinks,omitempty"`
 		} `json:"fields,omitempty"`
@@ -102,7 +104,7 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 	for _, v := range result.Issues[0].Fields.IssueLinks {
 		tickets = append(tickets, &Ticket{
 			ID:     v.OutwardIssue.Key,
-			Status: v.OutwardIssue.Status.Name,
+			Status: v.OutwardIssue.Fields.Status.Name,
 		})
 	}
 
