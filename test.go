@@ -106,7 +106,9 @@ func (a *ReleaseAssistant) searchRelease(when time.Time) (string, string, error)
 		})
 	}
 
-	log.Printf("%+v", tickets)
+	for _, v := range tickets {
+		log.Printf("%+v", v)
+	}
 	return "", "", nil
 }
 
