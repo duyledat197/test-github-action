@@ -42,16 +42,15 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
 
-            const { getPRCommits} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
+            const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
             const commits = await getPRCommits({ github, context });
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
 
       - name: Step 2
-        shell: bash
         id: test2
         env:
-          JIRA_USER: ${{ secrets.JIRA_USER }}
+          JIRA_USER: ${{ secrets.JIRA_USER.JIRA_TOKEN }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         run: |
           set -e
