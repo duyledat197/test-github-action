@@ -65,6 +65,7 @@ jobs:
           JIRA_USER: ${{ secrets.JIRA_USER }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
           TICKET_IDS: ${{ env.TICKET_IDS }}
+          TEST: "test"
         run: |
           set -e
           go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}} &&  echo ${TEST}
