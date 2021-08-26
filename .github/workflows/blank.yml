@@ -43,6 +43,8 @@ jobs:
         run: |
           set -e
           echo "::set-output name=BRANCH_NAME::$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)"
+          echo $(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
+          echo $(git branch --all --list '*origin/release/20*' | sort -r | head -n 1 | cut -c18-)
 
       # Runs a set of commands using the runners shell
       - name: Step 1
