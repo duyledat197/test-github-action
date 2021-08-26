@@ -20,6 +20,19 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
+      - name: Step 2
+        id: test
+        env:
+          JIRA_USER: ${{ secrets.JIRA_USER }}
+          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+        run: |
+          set -e
+          echo "test"
+          echo "${{env.JIRA_USER}}"
+          echo "${{env.JIRA_TOKEN}}"
+          echo "${{secrets.JIRA_USER}}"
+          echo "${{secrets.JIRA_TOKEN}}"
+
       - name: Checkout source
         uses: actions/checkout@v2
         with:
@@ -50,7 +63,7 @@ jobs:
       - name: Step 2
         id: test2
         env:
-          JIRA_USER: ${{ secrets.JIRA_USER.JIRA_TOKEN }}
+          JIRA_USER: ${{ secrets.JIRA_USER }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         run: |
           set -e
