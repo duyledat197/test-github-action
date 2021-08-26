@@ -74,6 +74,8 @@ func main() {
 	jiraUserFlag := flag.String("user", "", "JIRA user name, eg: devops@manabie.com")
 	jiraTokenFlag := flag.String("token", "", "JIRA user token")
 	releaseDateFlag := flag.String("releaseDate", "", "Release date in yyyymmdd fmt, eg: 20160101")
+
+	flag.Parse()
 	log.Println("jiraUserFlag", *jiraUserFlag)
 	log.Println("jiraTokenFlag", *jiraTokenFlag)
 
