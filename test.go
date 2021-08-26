@@ -28,14 +28,16 @@ type ReleaseAssistant struct {
 }
 
 type Data struct {
-	IssueLinks []struct {
-		OutwardIssue struct {
-			Key    string `json:"key,omitempty"`
-			Status struct {
-				Name string `json:"name,omitempty"`
-			} `json:"status,omitempty"`
-		} `json:"outwardIssue,omitempty"`
-	} `json:"issuelinks,omitempty"`
+	Issues []struct {
+		IssueLinks []struct {
+			OutwardIssue struct {
+				Key    string `json:"key,omitempty"`
+				Status struct {
+					Name string `json:"name,omitempty"`
+				} `json:"status,omitempty"`
+			} `json:"outwardIssue,omitempty"`
+		} `json:"issuelinks,omitempty"`
+	} `json:"issues"`
 }
 
 func (a *ReleaseAssistant) get(url string) ([]byte, error) {
