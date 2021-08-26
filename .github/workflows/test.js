@@ -4,6 +4,7 @@ async function getPRCommits({ github, context }) {
     repo: context.repo.repo,
     pull_number: context.payload.number,
   });
+  console.log(github.pulls);
   const regex = /\bLT-\d{1,6}\b/;
   return result.data
     .map((el) => {
