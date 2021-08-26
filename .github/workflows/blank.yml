@@ -69,7 +69,7 @@ jobs:
         run: |
           set -e
           eval $(go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}})
-          echo "::set-output name=messages::$(cat .env)"
+          echo "::set-output name=messages::"$(cat .env)""
 
       - name: Step 3
         id: test3
