@@ -53,13 +53,8 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           run: |
-            console.log("getTicketIDs")
-            const { getTicketIDs} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
-            getTicketIDs();
-      - name: Step 3
-        id: test3
-        run: |
-          echo "${{env.TICKETIDS}}"
+            echo "${{secret.JIRA_USER}}"
+            echo "${{secret.JIRA_TOKEN}}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
