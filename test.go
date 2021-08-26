@@ -159,7 +159,7 @@ func main() {
 		panic(err)
 	}
 	log.Println(string(b))
-	os.Setenv("TEST", "test")
+	os.Setenv("TEST", "test3333")
 	if err := os.Setenv("MESSAGES", string(b)); err != nil {
 		log.Panic(err)
 	}
