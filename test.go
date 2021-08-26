@@ -135,5 +135,20 @@ func main() {
 		panic(err)
 	}
 
-	fmt.Println(jiraTickets)
+	ticketMap := make(map[string]*Ticket)
+
+	for _, v := range jiraTickets {
+		ticketMap[v.ID] = v
+	}
+
+	var message []string
+
+	for _, v := range commitTicketIDs {
+		_, ok := ticketMap[v]
+		if !ok {
+			message = append(message, fmt.Sprintf("%s is not noted in release ticket", v))
+		}
+	}
+
+	log.Println(message)
 }
