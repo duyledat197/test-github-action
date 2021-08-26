@@ -67,11 +67,7 @@ jobs:
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
         run: |
           set -e
-          echo "test"
-          echo "${{env.JIRA_USER}}"
-          echo "${{env.JIRA_TOKEN}}"
-          echo "${{secrets.JIRA_USER}}"
-          echo "${{secrets.JIRA_TOKEN}}"
+          go run ./test.go --user=${{ secrets.JIRA_USER }} --token=${{ secrets.JIRA_TOKEN }}
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)

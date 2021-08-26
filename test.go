@@ -1,6 +1,9 @@
 package main
 
-import "log"
+import (
+	"flag"
+	"log"
+)
 
 const (
 	Test = "teset"
@@ -12,6 +15,9 @@ const (
 )
 
 func main() {
-	log.Printf("WTF MAN")
+	jiraUserFlag := flag.String("user", "", "JIRA user name, eg: devops@manabie.com")
+	jiraTokenFlag := flag.String("token", "", "JIRA user token")
+	log.Println("jiraUserFlag", jiraUserFlag)
+	log.Println("jiraTokenFlag", jiraTokenFlag)
 
 }
