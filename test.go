@@ -95,8 +95,6 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, string, err
 
 	var result Response
 
-	log.Println(string(resp))
-
 	if err := json.Unmarshal(resp, &result); err != nil {
 		log.Println(err)
 		return nil, "", err
