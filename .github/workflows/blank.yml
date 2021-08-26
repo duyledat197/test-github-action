@@ -52,7 +52,7 @@ jobs:
         uses: actions/javascript-action@v1
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
+          run: |
 
             const { getTicketIDs} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
             getTicketIDs();
