@@ -137,7 +137,6 @@ func main() {
 
 	commitTicketIDs := strings.Split(strings.Trim(*commitTicketIDsFlag, Bracket), Comma)
 
-	log.Println(commitTicketIDs)
 	a := &JiraClient{
 		UserName:  *jiraUserFlag,
 		UserToken: *jiraTokenFlag,
