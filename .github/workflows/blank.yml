@@ -49,13 +49,11 @@ jobs:
 
       - name: Step 2
         id: test2
-        uses: actions/checkout@v2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-        env:
-          run: |
-            echo "${{secrets.JIRA_USER}}"
-            echo "${{secrets.JIRA_TOKEN}}"
+        run: |
+          echo "${{secrets.JIRA_USER}}"
+          echo "${{secrets.JIRA_TOKEN}}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
