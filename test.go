@@ -21,7 +21,7 @@ const (
 )
 
 var (
-	AcceptList = []string{"In progress", "Dev complete", "Ready for Review", "Waiting for demo"}
+	WorkStateList = []string{"In progress", "Dev complete", "Ready for Review", "Waiting for demo"}
 )
 
 type JiraClient struct {
@@ -118,6 +118,15 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, string, err
 	return tickets, result.Issues[0].Key, nil
 }
 
+func isTicketInWorkState(status string) bool {
+	for _, v := range WorkStateList {
+		if status == v {
+			return true
+		}
+	}
+	return false
+}
+
 func main() {
 	jiraUserFlag := flag.String("user", "", "JIRA user name, eg: devops@manabie.com")
 	jiraTokenFlag := flag.String("token", "", "JIRA user token")
@@ -149,22 +158,40 @@ func main() {
 	}
 
 	var messages []string
+	var statusMessages []string
 
 	for _, v := range commitTicketIDs {
-		_, ok := ticketMap[v]
+		ticket, ok := ticketMap[v]
 		if !ok {
 			messages = append(messages, v)
 		}
+		if !isTicketInWorkState(ticket.Status) {
+			statusMessages = append(statusMessages, v)
+		}
 	}
 
-	msgs := strings.Join(messages, ", ")
-	msgs += fmt.Sprintf("isn't noted in %s", mainTicketID)
+	var msg string
 
-	f, err := os.Create(".env")
-
-	if _, err := f.Write([]byte(msgs)); err != nil {
-		panic(err)
+	if len(messages) > 0 {
+		msg = strings.Join(messages, ", ")
+		msg += fmt.Sprintf(" isn't noted in release ticket (%s)", mainTicketID)
 	}
 
-	defer f.Close()
+	if len(statusMessages) > 0 {
+		sMsg := strings.Join(statusMessages, ", ")
+		sMsg = fmt.Sprintf(" isn't in work state (status must in %s)", sMsg)
+		msg += fmt.Sprintf("\n%v", sMsg)
+	}
+
+	if len(msg) > 0 {
+		f, err := os.Create(".env")
+		if err != nil {
+			panic(err)
+		}
+		if _, err := f.Write([]byte(msg)); err != nil {
+			panic(err)
+		}
+
+		defer f.Close()
+	}
 }
