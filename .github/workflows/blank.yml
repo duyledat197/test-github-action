@@ -70,10 +70,13 @@ jobs:
           set -e
           eval $(go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}})
           echo "::set-output name=messages::$(cat .env)"
-      - name: Step 2
+
+      - name: Step 3
         id: test3
-        run: |
-          echo "${{ steps.test2.outputs.messages }}"
+        uses: actions/github-script@v4
+        with:
+          script: |
+            echo "${{ steps.test2.outputs.messages }}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
