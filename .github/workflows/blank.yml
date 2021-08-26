@@ -81,7 +81,10 @@ jobs:
                owner: context.repo.owner,
               repo: context.repo.repo,
               pull_number: context.payload.number,
-              body: '👋 Thanks for reporting!'
+              body: '👋 Thanks for reporting!',
+              position: "last",
+              in_reply_to:"none",
+              "line": "last"
             })
 
 # console.log("${{ steps.test2.outputs.messages }}")
