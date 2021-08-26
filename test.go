@@ -94,6 +94,8 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, error) {
 
 	var result Response
 
+	log.Println(string(resp))
+
 	if err := json.Unmarshal(resp, &result); err != nil {
 		log.Println(err)
 		return nil, err
@@ -145,18 +147,21 @@ func main() {
 		ticketMap[v.ID] = v
 	}
 
-	var message string
+	var messages []string
 
 	for _, v := range commitTicketIDs {
 		_, ok := ticketMap[v]
 		if !ok {
-			message = message + fmt.Sprintf("%s is not noted in release ticket", v)
+			messages = append(messages, v)
 		}
 	}
 
+	msgs := strings.Join(messages, ", ")
+	msgs += fmt.Sprintf("isn't noted in %s")
+
 	f, err := os.Create(".env")
 
-	if _, err := f.Write([]byte(message)); err != nil {
+	if _, err := f.Write([]byte(msgs)); err != nil {
 		panic(err)
 	}
 
