@@ -51,7 +51,8 @@ jobs:
         id: test2
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+          ref: "develop"
+      - run: |
           echo "${{secrets.JIRA_USER}}"
           echo "${{secrets.JIRA_TOKEN}}"
 
