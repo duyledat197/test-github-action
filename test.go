@@ -29,6 +29,7 @@ type ReleaseAssistant struct {
 func (a *ReleaseAssistant) get(url string) ([]byte, error) {
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
+		log.Println(err)
 		return nil, err
 	}
 
@@ -91,6 +92,7 @@ func main() {
 		ConcurentLimit: 5,
 	}
 	if releaseDay, err := time.Parse(DATE_FMT, *releaseDateFlag); err == nil {
+		log.Println(a.searchRelease(releaseDay))
 		a.searchRelease(releaseDay)
 	} else {
 		log.Println(err)
