@@ -186,7 +186,7 @@ func main() {
 
 	if len(statusMessages) > 0 {
 		sMsg := strings.Join(statusMessages, ", ")
-		sMsg = fmt.Sprintf(" isn't in work state (status must in %s)", strings.Join(WorkStateList, ", "))
+		sMsg += fmt.Sprintf(" isn't in work state (status must in %s)", strings.Join(WorkStateList, ", "))
 		msg += fmt.Sprintf("\n%v", sMsg)
 	}
 
