@@ -118,10 +118,19 @@ func main() {
 	jiraUserFlag := flag.String("user", "", "JIRA user name, eg: devops@manabie.com")
 	jiraTokenFlag := flag.String("token", "", "JIRA user token")
 	releaseDateFlag := flag.String("releaseDate", "", "Release date in yyyymmdd fmt, eg: 20160101")
+	tidketIDsFlag := flag.String("ticketIDs", "", "List commit tickets, eg: [\"LT-8586\",\"LT-1234\"]")
 
 	flag.Parse()
 	log.Println("jiraUserFlag", *jiraUserFlag)
 	log.Println("jiraTokenFlag", *jiraTokenFlag)
+	log.Println("tidketIDsFlag", *tidketIDsFlag)
+
+	var ticketIDs []string
+
+	if err := json.Unmarshal([]byte(*tidketIDsFlag), &ticketIDs); err != nil {
+		log.Println(err)
+	}
+	log.Println("ticketIDs", ticketIDs)
 
 	a := &ReleaseAssistant{
 		UserName:  *jiraUserFlag,
@@ -138,7 +147,6 @@ func main() {
 		ConcurentLimit: 5,
 	}
 	if releaseDay, err := time.Parse(DATE_FMT, *releaseDateFlag); err == nil {
-		log.Println(a.searchRelease(releaseDay))
 		a.searchRelease(releaseDay)
 	} else {
 		log.Println(err)
