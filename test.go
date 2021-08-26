@@ -145,23 +145,18 @@ func main() {
 		ticketMap[v.ID] = v
 	}
 
-	var message []string
+	var message string
 
 	for _, v := range commitTicketIDs {
 		_, ok := ticketMap[v]
 		if !ok {
-			message = append(message, fmt.Sprintf("%s is not noted in release ticket", v))
+			message = message + fmt.Sprintf("%s is not noted in release ticket", v)
 		}
 	}
 
-	b, err := json.Marshal(message)
-	if err != nil {
-		panic(err)
-	}
-	log.Println(string(b))
-
 	f, err := os.Create(".env")
-	if _, err := f.Write(b); err != nil {
+
+	if _, err := f.Write([]byte(message)); err != nil {
 		panic(err)
 	}
 
