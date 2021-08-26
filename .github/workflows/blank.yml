@@ -25,14 +25,14 @@ jobs:
         with:
           fetch-depth: "0"
 
-      - name: Get current release branch
+      - name: Step 0
         id: current_release_branch
         run: |
           set -e
           echo "::set-output name=BRANCH_NAME::$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)"
 
       # Runs a set of commands using the runners shell
-      - name: Run a multi-line script
+      - name: Step 1
         id: get_release_pull_request
         uses: actions/github-script@v4
         env:
@@ -43,12 +43,15 @@ jobs:
           script: |
 
             const { getPRCommits} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
-            console.log(getPRCommits)
             const commits = await getPRCommits({ github, context });
 
             core.exportVariable('TICKETIDS', JSON.stringify(commits))
 
-      - name: Get current release branch
+      - name: Step 2
+        id: test
+        run: |
+          echo "${{env.TICKETIDS}}"
+      - name: Step 3
         id: test
         run: |
           echo "${{env.TICKETIDS}}"
