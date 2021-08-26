@@ -45,9 +45,10 @@ jobs:
             const { getPRCommits} = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
             const commits = await getPRCommits({ github, context });
 
-            core.exportVariable('TICKETIDS', JSON.stringify(commits))
+            core.exportVariable('TICKET_IDS', JSON.stringify(commits))
 
       - name: Step 2
+        shell: bash
         id: test2
         env:
           JIRA_USER: ${{ secrets.JIRA_USER }}
@@ -57,6 +58,8 @@ jobs:
           echo "test"
           echo "${{env.JIRA_USER}}"
           echo "${{env.JIRA_TOKEN}}"
+          echo "${{secrets.JIRA_USER}}"
+          echo "${{secrets.JIRA_TOKEN}}"
 
 # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
 # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
