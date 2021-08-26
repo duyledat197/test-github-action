@@ -8,6 +8,7 @@ import (
 	"log"
 	"net/http"
 	"net/url"
+	"os"
 	"regexp"
 	"strings"
 	"time"
@@ -16,6 +17,11 @@ import (
 const (
 	DATE_FMT = "20060102"
 	Comma    = ","
+	Bracket  = "[]"
+)
+
+var (
+	AcceptList = []string{"In progress", "Dev complete", "Ready for Review", "Waiting for demo"}
 )
 
 type JiraClient struct {
@@ -117,9 +123,7 @@ func main() {
 
 	flag.Parse()
 
-	str := strings.Trim(*commitTicketIDsFlag, "[]")
-	commitTicketIDs := strings.Split(str, Comma)
-	fmt.Println(commitTicketIDs)
+	commitTicketIDs := strings.Split(strings.Trim(*commitTicketIDsFlag, Bracket), Comma)
 	a := &JiraClient{
 		UserName:  *jiraUserFlag,
 		UserToken: *jiraTokenFlag,
@@ -150,5 +154,10 @@ func main() {
 		}
 	}
 
-	log.Println(message)
+	b, err := json.Marshal(message)
+	if err != nil {
+		panic(err)
+	}
+
+	os.Setenv("MESSAGES", string(b))
 }
