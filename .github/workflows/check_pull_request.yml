@@ -49,7 +49,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/check_pull_request.js`);
+            const { getPRCommits } = require(`${GITHUB_WORKSPACE}/.github/workflows/check_pull_request.js`);
             const commits = await getPRCommits({ github, context });
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
