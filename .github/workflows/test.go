@@ -135,7 +135,6 @@ func main() {
 
 	flag.Parse()
 
-	log.Println(*releaseDateFlag)
 	commitTicketIDs := strings.Split(strings.Trim(*commitTicketIDsFlag, Bracket), Comma)
 
 	log.Println(commitTicketIDs)
@@ -177,17 +176,15 @@ func main() {
 
 	var msg string
 
-	log.Println(messages)
-	log.Println(statusMessages)
-
 	if len(messages) > 0 {
-		msg = strings.Join(messages, ", ")
-		msg = fmt.Sprintf("<b>%s</b> isn't noted in release ticket (<b>%s</b>)", msg, mainTicketID)
+		msg = fmt.Sprintf("<b>%s</b> isn't noted in release ticket (<b>%s</b>)", strings.Join(messages, ", "), mainTicketID)
 	}
 
 	if len(statusMessages) > 0 {
-		sMsg := strings.Join(statusMessages, ", ")
-		sMsg = fmt.Sprintf("<b>%s</b> isn't in work state (status must in <b>%s</b>)", sMsg, strings.Join(WorkStateList, ", "))
+		sMsg := fmt.Sprintf("<b>%s</b> isn't in work state (status must in <b>%s</b>)",
+			strings.Join(statusMessages, ", "),
+			strings.Join(WorkStateList, ", "),
+		)
 		msg += fmt.Sprintf(",<br/>%v", sMsg)
 	}
 

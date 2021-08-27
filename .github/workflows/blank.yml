@@ -66,10 +66,11 @@ jobs:
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
           TICKET_IDS: ${{ env.TICKET_IDS }}
           TARGET_BRANCH: ${{ github.base_ref }}
+          GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
           set -e
           releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
-          go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
+          go run ${{env.GITHUB_WORKSPACE}}/.github/workflows/test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
           message=$(cat get_tickets_from_jira_and_check.env)
           if [[ ${#message} > 0 ]];
           then
