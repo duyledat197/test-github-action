@@ -70,7 +70,7 @@ jobs:
           set -e
           go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}}
           message=$(cat get_tickets_from_jira_and_check.env)
-          if[[${#message} > 0]];
+          if[[ ${#message} > 0 ]];
           then
             echo "::set-output name=messages::"${message}""
           else
