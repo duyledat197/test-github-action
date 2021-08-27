@@ -35,18 +35,18 @@ jobs:
           regexp_feature_branch="^feature\/.*$"
           regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[0-1]|[0-2][1-9]|[12]0)$"
 
-          echo $SOURCE_BRANCH
           is_feature=$(echo ${SOURCE_BRANCH} | grep -o -P "${regexp_feature_branch}" | wc -l)
           is_release=$(echo ${TARGET_BRANCH} | grep -o -P "${regexp_release_branch}" | wc -l)
-          echo $is_feature
-          echo $is_release
-          if [[ is_feature == 1 && is_release == 1 ]];
+          if [[ is_feature != 1 || is_release != 1 ]];
           then
-            echo "::set-output name=skip::false"
-          else
-            echo "::set-output name=skip::true"
+             echo "::set-output name=skip::true"
           fi
-
+      # if [[ is_feature == 1 && is_release == 1 ]];
+      #           then
+      #             # echo "::set-output name=skip::false"
+      #           else
+      #             echo "::set-output name=skip::true"
+      #           fi
       # Runs a set of commands using the runners shell
       - name: Get tickets from pull request commits
         id: get_tickets_from_pull_request_commits
