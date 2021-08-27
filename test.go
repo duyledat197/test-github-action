@@ -191,7 +191,7 @@ func main() {
 	}
 
 	if len(msg) > 0 {
-		f, err := os.Create(".env")
+		f, err := os.Create("get_tickets_from_jira_and_check.env")
 		if err != nil {
 			panic(err)
 		}
