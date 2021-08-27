@@ -32,7 +32,7 @@ jobs:
           SOURCE_BRANCH: ${{ github.head_ref }}
         run: |
           set -e
-          regexp_feature_branch="^feature\/.*$$"
+          regexp_feature_branch="^feature\/.*$"
           regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[0-1]|[0-2][1-9]|[12]0)$"
 
           echo $SOURCE_BRANCH
