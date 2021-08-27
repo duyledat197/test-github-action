@@ -52,7 +52,7 @@ jobs:
             const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/check_pull_request.js`);
             const commits = await getPRCommits({ github, context });
 
-            core.exportVariable('TICKET_IDS', JSON.stringify(commits))
+            core.exportVariable('TICKET_IDS', commits)
 
       - name: Get tickets from jira issues and check
         id: get_tickets_from_jira_and_check
