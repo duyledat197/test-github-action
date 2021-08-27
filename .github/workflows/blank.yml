@@ -51,8 +51,8 @@ jobs:
       # Runs a set of commands using the runners shell
       - name: Get tickets from pull request commits
         id: get_tickets_from_pull_request_commits
+        if: ${{ steps.check_format_branch.outputs.skip }}
         uses: actions/github-script@v4
-        if: ${{ !steps.check_format_branch.outputs.skip }}
         env:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
           GITHUB_WORKSPACE: ${{ github.workspace }}
