@@ -38,10 +38,12 @@ jobs:
           is_feature=$(echo ${SOURCE_BRANCH} | grep -o -P "${regex_feature_branch}" | wc -l)
           is_release=$(echo ${TARGET_BRANCH} | grep -o -P "${regexp_release_branch}" | wc -l)
 
-          if [[ is_feature == 1 && is_release == 1 ]]; then
+          if [[ is_feature == 1 && is_release == 1 ]];
+          then
             echo "::set-output name=skip::false"
+          else
+            echo "::set-output name=skip::true"
           fi
-          echo "::set-output name=skip::true"
 
       # Runs a set of commands using the runners shell
       - name: Get tickets from pull request commits
