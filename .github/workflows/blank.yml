@@ -20,36 +20,34 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-      - name: Step 2
-        id: test
-        env:
-          JIRA_USER: ${{ secrets.JIRA_USER }}
-          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-        run: |
-          set -e
-          echo "test"
-          echo "${{env.JIRA_USER}}"
-          echo "${{env.JIRA_TOKEN}}"
-          echo "${{secrets.JIRA_USER}}"
-          echo "${{secrets.JIRA_TOKEN}}"
-
       - name: Checkout source
         uses: actions/checkout@v2
         with:
           fetch-depth: "0"
 
-      - name: Step 0
-        id: current_release_branch
+      - name: check format branch
+        id: check_format_branch
+        env:
+          TARGET_BRANCH: ${{ github.base_ref }}
+          SOURCE_BRANCH: ${{ github.head_ref }}
         run: |
           set -e
-          echo "::set-output name=BRANCH_NAME::$(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)"
-          echo $(git branch --all --list '*release/20*' | sort -r | head -n 1 | cut -c18-)
-          echo $(git branch --all --list '*origin/release/20*' | sort -r | head -n 1 | cut -c18-)
+          regex_feature_branch="^feature\/.*$$"
+          regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[0-1]|[0-2][1-9]|[12]0)$"
+
+          is_feature=$(echo ${SOURCE_BRANCH} | grep -o -P "${regex_feature_branch}" | wc -l)
+          is_release=$(echo ${TARGET_BRANCH} | grep -o -P "${regexp_release_branch}" | wc -l)
+
+          if [[ is_feature == 1 && is_release == 1 ]]; then
+            echo "::set-output name=skip::false"
+          fi
+          echo "::set-output name=skip::true"
 
       # Runs a set of commands using the runners shell
-      - name: Step 1
-        id: get_release_pull_request
+      - name: Get tickets from pull request commits
+        id: get_tickets_from_pull_request_commits
         uses: actions/github-script@v4
+        if: ${{ !steps.check_format_branch.outputs.skip }}
         env:
           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
           GITHUB_WORKSPACE: ${{ github.workspace }}
@@ -60,6 +58,7 @@ jobs:
             const commits = await getPRCommits({ github, context });
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
+
       - name: Step 2
         id: test2
         env:
