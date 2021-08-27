@@ -181,12 +181,12 @@ func main() {
 
 	if len(messages) > 0 {
 		msg = strings.Join(messages, ", ")
-		msg += fmt.Sprintf(" isn't noted in release ticket (%s)", mainTicketID)
+		msg = fmt.Sprintf("<b>%s</b> isn't noted in release ticket (<b>%s</b>)", msg, mainTicketID)
 	}
 
 	if len(statusMessages) > 0 {
 		sMsg := strings.Join(statusMessages, ", ")
-		sMsg += fmt.Sprintf(" isn't in work state (status must in %s)", strings.Join(WorkStateList, ", "))
+		sMsg = fmt.Sprintf("<b>%s</b> isn't in work state (status must in <b>%s</b>)", sMsg, strings.Join(WorkStateList, ", "))
 		msg += fmt.Sprintf(",<br/>%v", sMsg)
 	}
 
