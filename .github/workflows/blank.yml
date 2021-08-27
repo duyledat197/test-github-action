@@ -40,16 +40,9 @@ jobs:
 
           if [[ $is_feature != 1 || $is_release != 1 ]];
           then
-             echo "hello"
              echo "::set-output name=skip::true"
           fi
-      # if [[ is_feature == 1 && is_release == 1 ]];
-      #           then
-      #             # echo "::set-output name=skip::false"
-      #           else
-      #             echo "::set-output name=skip::true"
-      #           fi
-      # Runs a set of commands using the runners shell
+
       - name: Get tickets from pull request commits
         id: get_tickets_from_pull_request_commits
         if: ${{ !steps.check_format_branch.outputs.skip }}
@@ -65,8 +58,8 @@ jobs:
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
 
-      - name: Step 2
-        id: test2
+      - name: Get tickets from jira issues and check
+        id: get_tickets_from_jira_and_check
         env:
           JIRA_USER: ${{ secrets.JIRA_USER }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
@@ -75,6 +68,7 @@ jobs:
         run: |
           set -e
           go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}}
+          echo ${#$(cat.env)}
           echo "::set-output name=messages::"$(cat .env)""
 
       - name: Step 3
