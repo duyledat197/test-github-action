@@ -18,7 +18,7 @@ async function getPRCommits({ github, context, page = 1 }) {
     repo: context.repo.repo,
     pull_number: context.payload.number,
     page,
-    per_page: 1,
+    per_page: 100,
   });
   console.log(result.data);
   if (result && result.data && result.data.length > 0) {

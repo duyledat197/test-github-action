@@ -18,12 +18,11 @@ const (
 	DATE_FMT = "20060102"
 	Comma    = ","
 	Bracket  = "[]"
-	Test     = "test"
 )
 
 var (
 	WorkStateList = []string{"In progress", "Dev complete", "Ready for Review", "Waiting for demo"}
-	TicketRegex   = regexp.MustCompile(`LT-[0-9]{1,6}`)
+	TicketRegex   = regexp.MustCompile(`\bLT-[0-9]{1,6}\b`)
 )
 
 type JiraClient struct {
@@ -35,29 +34,6 @@ type JiraClient struct {
 	ReleaseDay     time.Weekday
 
 	ConcurentLimit int
-}
-
-type Response struct {
-	Issues []struct {
-		Key    string `json:"key,omitempty"`
-		Fields struct {
-			IssueLinks []struct {
-				OutwardIssue struct {
-					Key    string `json:"key,omitempty"`
-					Fields struct {
-						Status struct {
-							Name string `json:"name,omitempty"`
-						} `json:"status,omitempty"`
-					} `json:"fields,omitempty"`
-				} `json:"outwardIssue,omitempty"`
-			} `json:"issuelinks,omitempty"`
-		} `json:"fields,omitempty"`
-	} `json:"issues,omitempty"`
-}
-
-type Ticket struct {
-	ID     string
-	Status string
 }
 
 func (a *JiraClient) get(url string) ([]byte, error) {
@@ -119,6 +95,29 @@ func (a *JiraClient) getIssueTickets(releaseDate string) ([]*Ticket, string, err
 	return tickets, result.Issues[0].Key, nil
 }
 
+type Response struct {
+	Issues []struct {
+		Key    string `json:"key,omitempty"`
+		Fields struct {
+			IssueLinks []struct {
+				OutwardIssue struct {
+					Key    string `json:"key,omitempty"`
+					Fields struct {
+						Status struct {
+							Name string `json:"name,omitempty"`
+						} `json:"status,omitempty"`
+					} `json:"fields,omitempty"`
+				} `json:"outwardIssue,omitempty"`
+			} `json:"issuelinks,omitempty"`
+		} `json:"fields,omitempty"`
+	} `json:"issues,omitempty"`
+}
+
+type Ticket struct {
+	ID     string
+	Status string
+}
+
 func isTicketInWorkState(status string) bool {
 	for _, v := range WorkStateList {
 		if status == v {
@@ -138,20 +137,24 @@ func main() {
 
 	commitTicketIDs := strings.Split(strings.Trim(*commitTicketIDsFlag, Bracket), Comma)
 
-	log.Println(commitTicketIDs)
+	distinctTicketIDs := make(map[string]bool)
+	for _, v := range commitTicketIDs {
+		distinctTicketIDs[v] = true
+	}
+
 	a := &JiraClient{
 		UserName:  *jiraUserFlag,
 		UserToken: *jiraTokenFlag,
 	}
 	_, err := time.Parse(DATE_FMT, *releaseDateFlag)
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to parse release date: %w", err))
 	}
 
 	jiraTickets, mainTicketID, err := a.getIssueTickets(*releaseDateFlag)
 
 	if err != nil {
-		panic(err)
+		panic(fmt.Errorf("failed to get issue tickets: %w", err))
 	}
 
 	ticketMap := make(map[string]*Ticket)
@@ -163,29 +166,28 @@ func main() {
 	var messages []string
 	var statusMessages []string
 
-	for _, v := range commitTicketIDs {
-		ticket, ok := ticketMap[v]
+	for ticketID := range distinctTicketIDs {
+		ticket, ok := ticketMap[ticketID]
 		if !ok {
-			messages = append(messages, v)
+			messages = append(messages, ticketID)
 		} else {
 			if !isTicketInWorkState(ticket.Status) {
-				statusMessages = append(statusMessages, v)
+				log.Println(ticket.Status)
+				statusMessages = append(statusMessages, ticketID)
 			}
 		}
 
 	}
 
 	var msg string
-
 	if len(messages) > 0 {
-		log.Println("strings.Join(messages, ", ")", strings.Join(messages, ", "))
-		msg = fmt.Sprintf("<b>%s</b> isn't noted in release ticket (<b>%s</b>)", strings.Join(messages, ", "), mainTicketID)
+		str := strings.Join(messages, ", ")
+		msg = fmt.Sprintf("<b>%s</b> isn't noted in release ticket (<b> %s </b>)", str, mainTicketID)
 	}
 
 	if len(statusMessages) > 0 {
-		sMsg := fmt.Sprintf("<b>%s</b> isn't in work state (status must in <b>%s</b>)",
+		sMsg := fmt.Sprintf("<b>%s</b>  don't have the correct status  (<b>	&quot;In progress&quot;</b>, <b>&quot;Dev complete&quot;</b> <b>&quot;Ready for Review&quot;</b> or<b>&quot; Waiting for demo&quot;</b> )",
 			strings.Join(statusMessages, ", "),
-			strings.Join(WorkStateList, ", "),
 		)
 		msg += fmt.Sprintf(",<br/>%v", sMsg)
 	}
@@ -193,10 +195,10 @@ func main() {
 	if len(msg) > 0 {
 		f, err := os.Create("get_tickets_from_jira_and_check.env")
 		if err != nil {
-			panic(err)
+			panic(fmt.Errorf("can't create file %v", err))
 		}
 		if _, err := f.Write([]byte(msg)); err != nil {
-			panic(err)
+			panic(fmt.Errorf("can't write file %v", err))
 		}
 
 		defer f.Close()
