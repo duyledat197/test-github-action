@@ -65,10 +65,11 @@ jobs:
           JIRA_USER: ${{ secrets.JIRA_USER }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
           TICKET_IDS: ${{ env.TICKET_IDS }}
-          TEST: "test"
+          TARGET_BRANCH: ${{ github.base_ref }}
         run: |
           set -e
-          go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=20210825 -commitTicketIDs=${{env.TICKET_IDS}}
+          releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
+          go run ./test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
           message=$(cat get_tickets_from_jira_and_check.env)
           if [[ ${#message} > 0 ]];
           then
@@ -78,20 +79,18 @@ jobs:
              echo "::set-output name=skip::true"
           fi
 
-      - name: Step 3
-        id: test3
+      - name: comment
+        id: comment_message
         if: ${{ !steps.check_format_branch.outputs.skip && !steps.get_tickets_from_jira_and_check.outputs.skip }}
         uses: actions/github-script@v4
         with:
           script: |
-            const messages = "${{steps.get_tickets_from_jira_and_check.outputs.messages}}";
-            console.log(messages)
             github.issues.createComment({
                owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
               body:messages,
-            })
+            });
 
 # console.log("${{ steps.test2.outputs.messages }}")
 

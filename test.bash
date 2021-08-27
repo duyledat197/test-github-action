@@ -1,9 +1,1 @@
-test="asdasd"
-t=""
-
-if [[ ${#t} > 0 ]];
-then
-    echo $t
-else
-    echo "hello"
-fi
+echo 'release/20210825' | cut -d'/' -f 2
