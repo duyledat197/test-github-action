@@ -135,6 +135,7 @@ func main() {
 
 	flag.Parse()
 
+	log.Println(*releaseDateFlag)
 	commitTicketIDs := strings.Split(strings.Trim(*commitTicketIDsFlag, Bracket), Comma)
 
 	log.Println(commitTicketIDs)
