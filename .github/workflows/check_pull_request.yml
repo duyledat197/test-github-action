@@ -52,7 +52,7 @@ jobs:
             const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/check_pull_request.js`);
             const commits = await getPRCommits({ github, context });
 
-            core.exportVariable('TICKET_IDS', JSON.stringify(commits))
+            core.exportVariable('TICKET_IDS', commits)
 
       - name: Get tickets from jira issues and check
         id: get_tickets_from_jira_and_check
@@ -60,7 +60,6 @@ jobs:
         env:
           JIRA_USER: ${{ secrets.JIRA_USER }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-          TICKET_IDS: ${{ env.TICKET_IDS }}
           TARGET_BRANCH: ${{ github.base_ref }}
           GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
@@ -68,7 +67,8 @@ jobs:
           releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
           echo ${GITHUB_WORKSPACE}
           echo ${TICKET_IDS}
-          go run ${GITHUB_WORKSPACE}/.github/workflows/check_pull_request.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${TICKET_IDS}
+          echo ${releaseDate}
+          go run ${GITHUB_WORKSPACE}/.github/workflows/check_pull_request.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
           message=$(cat get_tickets_from_jira_and_check.env)
           if [[ ${#message} > 0 ]];
           then
@@ -89,5 +89,5 @@ jobs:
               owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
-              body:messages,
+              body: JSON.stringify(messages),
             });
