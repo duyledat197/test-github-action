@@ -39,6 +39,7 @@ jobs:
           is_release=$(echo ${TARGET_BRANCH} | grep -o -P "${regexp_release_branch}" | wc -l)
           if [[ is_feature != 1 || is_release != 1 ]];
           then
+             echo "hello"
              echo "::set-output name=skip::true"
           fi
       # if [[ is_feature == 1 && is_release == 1 ]];
