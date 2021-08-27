@@ -177,6 +177,7 @@ func main() {
 	var msg string
 
 	if len(messages) > 0 {
+		log.Println("strings.Join(messages, ", ")", strings.Join(messages, ", "))
 		msg = fmt.Sprintf("<b>%s</b> isn't noted in release ticket (<b>%s</b>)", strings.Join(messages, ", "), mainTicketID)
 	}
 
