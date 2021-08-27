@@ -68,6 +68,7 @@ jobs:
           releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
           echo ${GITHUB_WORKSPACE}
           echo ${TICKET_IDS}
+          echo ${releaseDate}
           go run ${GITHUB_WORKSPACE}/.github/workflows/check_pull_request.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${TICKET_IDS}
           message=$(cat get_tickets_from_jira_and_check.env)
           if [[ ${#message} > 0 ]];

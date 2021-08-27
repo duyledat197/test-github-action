@@ -1,100 +1,100 @@
-# This is a basic workflow to help you get started with Actions
+# # This is a basic workflow to help you get started with Actions
 
-name: CI
+# name: CI
 
-# Controls when the workflow will run
-on:
-  # Triggers the workflow on push or pull request events but only for the main branch
-  pull_request:
-    types: [labeled]
+# # Controls when the workflow will run
+# on:
+#   # Triggers the workflow on push or pull request events but only for the main branch
+#   pull_request:
+#     types: [labeled]
 
-  # Allows you to run this workflow manually from the Actions tab
-  workflow_dispatch:
+#   # Allows you to run this workflow manually from the Actions tab
+#   workflow_dispatch:
 
-# A workflow run is made up of one or more jobs that can run sequentially or in parallel
-jobs:
-  # This workflow contains a single job called "build"
-  build:
-    # The type of runner that the job will run on
-    runs-on: ubuntu-latest
+# # A workflow run is made up of one or more jobs that can run sequentially or in parallel
+# jobs:
+#   # This workflow contains a single job called "build"
+#   build:
+#     # The type of runner that the job will run on
+#     runs-on: ubuntu-latest
 
-    # Steps represent a sequence of tasks that will be executed as part of the job
-    steps:
-      - name: Checkout source
-        uses: actions/checkout@v2
-        with:
-          fetch-depth: "0"
+#     # Steps represent a sequence of tasks that will be executed as part of the job
+#     steps:
+#       - name: Checkout source
+#         uses: actions/checkout@v2
+#         with:
+#           fetch-depth: "0"
 
-      - name: check format branch
-        id: check_format_branch
-        env:
-          TARGET_BRANCH: ${{ github.base_ref }}
-          SOURCE_BRANCH: ${{ github.head_ref }}
-        run: |
-          set -e
-          regexp_feature_branch="^feature\/.*$"
-          regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[0-1]|[0-2][1-9]|[12]0)$"
+#       - name: check format branch
+#         id: check_format_branch
+#         env:
+#           TARGET_BRANCH: ${{ github.base_ref }}
+#           SOURCE_BRANCH: ${{ github.head_ref }}
+#         run: |
+#           set -e
+#           regexp_feature_branch="^feature\/.*$"
+#           regexp_release_branch="^release\/(20[2-9][1-9])(1[0-2]|0[1-9])(3[0-1]|[0-2][1-9]|[12]0)$"
 
-          is_feature=$(echo ${SOURCE_BRANCH} | grep -o -P "${regexp_feature_branch}" | wc -l)
-          is_release=$(echo ${TARGET_BRANCH} | grep -o -P "${regexp_release_branch}" | wc -l)
+#           is_feature=$(echo ${SOURCE_BRANCH} | grep -o -P "${regexp_feature_branch}" | wc -l)
+#           is_release=$(echo ${TARGET_BRANCH} | grep -o -P "${regexp_release_branch}" | wc -l)
 
-          if [[ $is_feature != 1 || $is_release != 1 ]];
-          then
-             echo "::set-output name=skip::true"
-          fi
+#           if [[ $is_feature != 1 || $is_release != 1 ]];
+#           then
+#              echo "::set-output name=skip::true"
+#           fi
 
-      - name: Get tickets from pull request commits
-        id: get_tickets_from_pull_request_commits
-        if: ${{ !steps.check_format_branch.outputs.skip }}
-        uses: actions/github-script@v4
-        env:
-          TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
-          GITHUB_WORKSPACE: ${{ github.workspace }}
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-          script: |
-            const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
-            const commits = await getPRCommits({ github, context });
+#       - name: Get tickets from pull request commits
+#         id: get_tickets_from_pull_request_commits
+#         if: ${{ !steps.check_format_branch.outputs.skip }}
+#         uses: actions/github-script@v4
+#         env:
+#           TARGET_BRANCH: ${{ github.base_ref }} # identical to $GITHUB_BASE_REF
+#           GITHUB_WORKSPACE: ${{ github.workspace }}
+#         with:
+#           github-token: ${{ secrets.GITHUB_TOKEN }}
+#           script: |
+#             const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
+#             const commits = await getPRCommits({ github, context });
 
-            core.exportVariable('TICKET_IDS', JSON.stringify(commits))
+#             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
 
-      - name: Get tickets from jira issues and check
-        id: get_tickets_from_jira_and_check
-        if: ${{ !steps.check_format_branch.outputs.skip }}
-        env:
-          JIRA_USER: ${{ secrets.JIRA_USER }}
-          JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-          TICKET_IDS: ${{ env.TICKET_IDS }}
-          TARGET_BRANCH: ${{ github.base_ref }}
-          GITHUB_WORKSPACE: ${{ github.workspace }}
-        run: |
-          set -e
-          releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
-          go run ${{env.GITHUB_WORKSPACE}}/.github/workflows/test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
-          message=$(cat get_tickets_from_jira_and_check.env)
-          if [[ ${#message} > 0 ]];
-          then
-            echo $message
-            echo "::set-output name=messages::${message}"
-          else
-             echo "::set-output name=skip::true"
-          fi
-          rm -f get_tickets_from_jira_and_check.env
+#       - name: Get tickets from jira issues and check
+#         id: get_tickets_from_jira_and_check
+#         if: ${{ !steps.check_format_branch.outputs.skip }}
+#         env:
+#           JIRA_USER: ${{ secrets.JIRA_USER }}
+#           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
+#           TICKET_IDS: ${{ env.TICKET_IDS }}
+#           TARGET_BRANCH: ${{ github.base_ref }}
+#           GITHUB_WORKSPACE: ${{ github.workspace }}
+#         run: |
+#           set -e
+#           releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
+#           go run ${{env.GITHUB_WORKSPACE}}/.github/workflows/test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
+#           message=$(cat get_tickets_from_jira_and_check.env)
+#           if [[ ${#message} > 0 ]];
+#           then
+#             echo $message
+#             echo "::set-output name=messages::${message}"
+#           else
+#              echo "::set-output name=skip::true"
+#           fi
+#           rm -f get_tickets_from_jira_and_check.env
 
-      - name: comment
-        id: comment_message
-        if: ${{ !steps.check_format_branch.outputs.skip && !steps.get_tickets_from_jira_and_check.outputs.skip }}
-        uses: actions/github-script@v4
-        with:
-          script: |
-            github.issues.createComment({
-               owner: context.repo.owner,
-              repo: context.repo.repo,
-              issue_number: context.payload.number,
-              body:messages,
-            });
+#       - name: comment
+#         id: comment_message
+#         if: ${{ !steps.check_format_branch.outputs.skip && !steps.get_tickets_from_jira_and_check.outputs.skip }}
+#         uses: actions/github-script@v4
+#         with:
+#           script: |
+#             github.issues.createComment({
+#                owner: context.repo.owner,
+#               repo: context.repo.repo,
+#               issue_number: context.payload.number,
+#               body:messages,
+#             });
 
-# console.log("${{ steps.test2.outputs.messages }}")
+# # console.log("${{ steps.test2.outputs.messages }}")
 
-# const {getReleasePR} = require(`${{github.workspace}}/test.js`)
-# return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
+# # const {getReleasePR} = require(`${{github.workspace}}/test.js`)
+# # return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
