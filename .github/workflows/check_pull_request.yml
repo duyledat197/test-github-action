@@ -1,23 +1,20 @@
-# This is a basic workflow to help you get started with Actions
-
 name: CI
 
 # Controls when the workflow will run
 on:
   # Triggers the workflow on push or pull request events but only for the main branch
   pull_request:
-    types: [labeled]
+    types: [opened]
 
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-  # This workflow contains a single job called "build"
-  build:
+  check-pull-request:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
-
+    needs: [prevent-merging-to-old-release-branch]
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       - name: Checkout source
@@ -40,7 +37,7 @@ jobs:
 
           if [[ $is_feature != 1 || $is_release != 1 ]];
           then
-             echo "::set-output name=skip::true"
+            echo "::set-output name=skip::true"
           fi
 
       - name: Get tickets from pull request commits
@@ -53,7 +50,7 @@ jobs:
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           script: |
-            const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/test.js`);
+            const { getPRCommits } = require(`${{env.GITHUB_WORKSPACE}}/.github/workflows/check_pull_request.js`);
             const commits = await getPRCommits({ github, context });
 
             core.exportVariable('TICKET_IDS', JSON.stringify(commits))
@@ -70,14 +67,13 @@ jobs:
         run: |
           set -e
           releaseDate=$(echo ${TARGET_BRANCH} | cut -d'/' -f 2)
-          go run ${{env.GITHUB_WORKSPACE}}/.github/workflows/test.go -user=${{ secrets.JIRA_USER }} -token=${{ secrets.JIRA_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
+          go run ${{env.GITHUB_WORKSPACE}}/.github/workflows/check_pull_request.go -user=devops@manabie.com -token=${{ secrets.JIRA_BOT_TOKEN }} -releaseDate=${releaseDate} -commitTicketIDs=${{env.TICKET_IDS}}
           message=$(cat get_tickets_from_jira_and_check.env)
           if [[ ${#message} > 0 ]];
           then
-            echo $message
             echo "::set-output name=messages::${message}"
           else
-             echo "::set-output name=skip::true"
+            echo "::set-output name=skip::true"
           fi
           rm -f get_tickets_from_jira_and_check.env
 
@@ -88,13 +84,8 @@ jobs:
         with:
           script: |
             github.issues.createComment({
-               owner: context.repo.owner,
+              owner: context.repo.owner,
               repo: context.repo.repo,
               issue_number: context.payload.number,
               body:messages,
             });
-
-# console.log("${{ steps.test2.outputs.messages }}")
-
-# const {getReleasePR} = require(`${{github.workspace}}/test.js`)
-# return await getReleasePR({github,context}, `${{ steps.current_release_branch.outputs.BRANCH_NAME }}`)
