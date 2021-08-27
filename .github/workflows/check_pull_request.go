@@ -18,6 +18,7 @@ const (
 	DATE_FMT = "20060102"
 	Comma    = ","
 	Bracket  = "[]"
+	A        = "b"
 )
 
 var (
