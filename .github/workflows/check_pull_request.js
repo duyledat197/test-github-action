@@ -20,9 +20,10 @@ async function getPRCommits({ github, context, page = 1 }) {
     page,
     per_page: 1,
   });
-
+  console.log(result.data);
   if (result && result.data && result.data.length > 0) {
-    return [...getTicketList(result.data), ...getPRCommits({ github, context, page: page + 1 })];
+    const nextData = await getPRCommits({ github, context, page: page + 1 });
+    return [...getTicketList(result.data), ...nextData];
   }
   return getTicketList(result.data);
 }
