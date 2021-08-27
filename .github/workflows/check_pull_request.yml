@@ -60,7 +60,6 @@ jobs:
         env:
           JIRA_USER: ${{ secrets.JIRA_USER }}
           JIRA_TOKEN: ${{ secrets.JIRA_TOKEN }}
-          TICKET_IDS: ${{ env.TICKET_IDS }}
           TARGET_BRANCH: ${{ github.base_ref }}
           GITHUB_WORKSPACE: ${{ github.workspace }}
         run: |
