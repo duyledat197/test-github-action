@@ -72,6 +72,7 @@ jobs:
           message=$(cat get_tickets_from_jira_and_check.env)
           if [[ ${#message} > 0 ]];
           then
+            echo $message
             echo "::set-output name=messages::"${message}""
           else
              echo "::set-output name=skip::true"
@@ -84,7 +85,7 @@ jobs:
         with:
           script: |
             const messages = "${{steps.get_tickets_from_jira_and_check.outputs.messages}} ";
-            console.log(messages )
+            console.log(messages)
             github.issues.createComment({
                owner: context.repo.owner,
               repo: context.repo.repo,
